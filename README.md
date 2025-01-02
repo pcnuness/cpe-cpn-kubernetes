@@ -150,12 +150,12 @@ alb_ingress_annotations = {
 
 3. Plan the resources:
    ```bash
-   terraform plan -var-file=dev.tfvars
+   terraform plan -var-file="./env/dev.tfvars"
    ```
 
 4. Apply the changes:
    ```bash
-   terraform apply -var-file=dev.tfvars
+   terraform apply -var-file="./env/dev.tfvars"
    ```
 
 5. Check outputs:
