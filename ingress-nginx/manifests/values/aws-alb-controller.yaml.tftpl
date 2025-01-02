@@ -1,0 +1,13 @@
+---
+replicaCount: 2
+region: ${region}
+vpcId: ${vpc_id}
+rbac:
+  create: true
+resources:
+  limits:
+    cpu: ${alb_resources.limits.cpu}
+    memory: ${alb_resources.limits.memory}
+  requests:
+    cpu: ${alb_resources.requests.cpu}
+    memory: ${alb_resources.requests.memory}

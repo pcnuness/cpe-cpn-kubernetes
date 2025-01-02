@@ -1,0 +1,12 @@
+---
+controller:
+  kind: "DaemonSet"
+  updateStrategy:
+    type: RollingUpdate
+  service:
+    internal:
+      enable: true
+      annotations:
+        service.beta.kubernetes.io/aws-load-balancer-scheme: "internal"
+defaultBackend:
+  replicaCount: 2
