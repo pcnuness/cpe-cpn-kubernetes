@@ -17,8 +17,9 @@ module "eks_addons" {
     lint          = true
     values = [
       templatefile("${path.root}/manifests/values/aws-alb-controller.yaml.tftpl", {
-        region = local.region
-        vpc_id = local.eks.vpc_id
+        region        = local.region
+        vpc_id        = local.eks.vpc_id
+        alb_resources = var.alb_resources
       })
     ]
   }
@@ -30,7 +31,7 @@ module "eks_addons" {
     repository    = "https://kubernetes.github.io/ingress-nginx"
     namespace     = "ingress-nginx"
     lint          = false
-    values        = [templatefile("${path.root}/manifests/files/ingress-nginx.yaml", {})]
+    values        = [templatefile("${path.root}/manifests/values/ingress-nginx.yaml", {})]
     wait          = false
   }
 }

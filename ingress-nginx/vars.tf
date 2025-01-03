@@ -44,6 +44,16 @@ variable "oidc_provider_arn" {
   type        = string
 }
 
+variable "acm_certificate_id" {
+  description = "Certificate ID in UUID format"
+  type        = string
+
+  validation {
+    condition     = can(regex("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", var.acm_certificate_id))
+    error_message = "The certificate_id must be a valid UUID (e.g., 5ccb0bca-bf8d-00f3-9153-4e5e12578de5)."
+  }
+}
+
 
 # AWS ALB Resources
 variable "alb_resources" {
@@ -65,14 +75,10 @@ variable "alb_ingress_annotations" {
   description = "Annotations for ALB ingress"
   type        = map(string)
   default = {
-    "alb.ingress.kubernetes.io/actions.ssl-redirect"     = "{\"Type\": \"redirect\", \"RedirectConfig\": { \"Protocol\": \"HTTPS\", \"Port\": \"443\", \"StatusCode\": \"HTTP_301\"}}"
     "alb.ingress.kubernetes.io/scheme"                   = "internet-facing"
     "alb.ingress.kubernetes.io/target-type"              = "instance"
     "alb.ingress.kubernetes.io/load-balancer-attributes" = "idle_timeout.timeout_seconds=600"
     "alb.ingress.kubernetes.io/healthcheck-path"         = "/"
-    "alb.ingress.kubernetes.io/listen-ports"             = jsonencode([{ "HTTP" = 80, "HTTPS" = 443 }])
     "alb.ingress.kubernetes.io/success-codes"            = "200,404"
-    "alb.ingress.kubernetes.io/certificate-arn"          = "arn:aws:acm:us-east-1:YOUR_CERT_ARN"
-    "alb.ingress.kubernetes.io/subnets"                  = "YOUR_SUBNETS"
   }
 }
