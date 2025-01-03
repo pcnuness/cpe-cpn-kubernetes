@@ -36,6 +36,20 @@ module "eks_addons" {
   }
 }
 
+resource "time_sleep" "addons" {
+  create_duration  = "60s"
+  destroy_duration = "60s"
+  depends_on = [
+    module.eks_addons
+  ]
+}
+
+resource "null_resource" "addons_blocker" {
+  depends_on = [
+    time_sleep.addons
+  ]
+}
+
 resource "kubernetes_ingress_v1" "ingress_forwarding" {
   metadata {
     name      = "forwarding-ingress-nginx"
@@ -78,6 +92,6 @@ resource "kubernetes_ingress_v1" "ingress_forwarding" {
   }
   wait_for_load_balancer = true
   depends_on = [
-    module.eks_addons
+    null_resource.addons_blocker
   ]
 }
