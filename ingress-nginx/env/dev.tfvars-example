@@ -1,0 +1,12 @@
+region             = "sa-east-1" # Alterado para outra região pública
+environment        = "test"      # Alterado para "test" como exemplo genérico
+cluster_name       = "eks-lab"
+cluster_version    = "1.31"
+vpc_id             = "vpc-0123456789abcdef0"                                                                             # Substituído por ID genérico
+oidc_provider_arn  = "arn:aws:iam::123456789012:oidc-provider/oidc.eks.us-west-2.amazonaws.com/id/EXAMPLEOIDC1234567890" # ARN genérico
+acm_certificate_id = "11111111-2222-3333-4444-555555555555"                                                              # UUID fictício
+
+alb_ingress_annotations = {
+  "alb.ingress.kubernetes.io/subnets"          = "subnet-abcde1234567890ab,subnet-12345abcdef67890" # Substituído por IDs fictícios
+  "alb.ingress.kubernetes.io/healthcheck-path" = "/"                                                # Mantido o valor original, pois não é sensível
+}
