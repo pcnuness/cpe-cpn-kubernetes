@@ -1,5 +1,5 @@
 region             = "sa-east-1" # Alterado para outra região pública
-environment        = "test"      # Alterado para "test" como exemplo genérico
+environment        = "develop"      # Alterado para "test" como exemplo genérico
 cluster_name       = "eks-lab"
 cluster_version    = "1.31"
 vpc_id             = "vpc-0123456789abcdef0"                                                                             # Substituído por ID genérico

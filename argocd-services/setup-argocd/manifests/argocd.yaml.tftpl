@@ -1,0 +1,105 @@
+---
+nameOverride: argocd
+crds:
+  install: true
+  keep: true
+global:
+  logging:
+    format: text
+    level: debug
+configs:
+  cm:
+    create: true
+    url: https://${argocd_url}
+    exec.enabled: true
+    timeout.reconciliation: 5s
+    timeout.hard.reconciliation: 0s
+    statusbadge.enabled: "true"
+    resource.customizations.ignoreDifferences.autoscaling_HorizontalPodAutoscaler: |
+      jqPathExpressions:
+      - '.spec.metrics[].resource.name | select((. == "cpu") or (. == "memory"))'
+  params:
+    controller.status.processors: 20
+    controller.operation.processors: 10
+    controller.self.heal.timeout.seconds: 5
+    controller.repo.server.timeout.seconds: 30
+    server.insecure: false
+  rbac:
+    create: true
+    policy.default: "role:readonly"
+    policy.csv: |
+      # ========= Role Admin =========
+      p, role:org-admin, applications, *, */*, allow
+      p, role:org-admin, clusters, get, *, allow
+      p, role:org-admin, repositories, get, *, allow
+      p, role:org-admin, repositories, create, *, allow
+      p, role:org-admin, repositories, update, *, allow
+      p, role:org-admin, repositories, delete, *, allow
+      # ========= Role Developer =========
+      p, role:developers, applications, get, */*, allow
+      p, role:developers, certificates, get, *, allow
+      p, role:developers, clusters, get, *, allow
+      p, role:developers, repositories, get, *, allow
+      p, role:developers, projects, get, *, allow
+      p, role:developers, accounts, get, *, allow
+      p, role:developers, gpgkeys, get, *, allow
+      p, role:developers, logs, get, */*, allow
+      p, role:developers, applications, sync, */*, allow
+      # ========= Assigning Roles =========
+      g, "6994ad3d-7bbe-473f-b6a0-ef47af1d0ca7", role:org-admin
+    scopes: "[groups]"
+  secret:
+    createSecret: true
+    argocdServerAdminPasswordMtime: ${argocd_admin_password_mtime}
+    argocdServerAdminPassword: ${argocd_admin_password}
+  styles: |
+    .sidebar__container::before {
+      content: '${env_name}';
+      display: block;
+      background-color: #d4351c;
+      color: #ffffff;
+      text-align: center;
+      font-weight: bold;
+      padding: 10px 4px;
+      overflow: hidden;
+      white-space: nowrap;
+      margin-top: 20px;
+    }
+    .sidebar--collapsed .sidebar__container::before {
+      content: '${env_abbreviation}';
+      font-size: 140%;
+      padding: 4px;
+    }
+controller:
+  replicas: 1
+  args:
+    statusProcessors: "50"
+    operationProcessors: "25"
+    appResyncPeriod: "360"
+    selfHealTimeout: "15"
+    repoServerTimeoutSeconds: "180"
+dex:
+  enabled: true
+  resources:
+    limits:
+      cpu: 50m
+      memory: 64Mi
+    requests:
+      cpu: 10m
+      memory: 32Mi
+redis-ha:
+  enabled: true
+repoServer:
+  replicas: 2
+server:
+  extraArgs:
+  - --insecure
+  service:
+    type: NodePort
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+    - ${argocd_url}
+applicationSet:
+  replicas: 2
